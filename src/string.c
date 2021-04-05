@@ -8,13 +8,15 @@
  *
  * param: restStr	pointer to string where results are written to.
  *
+ * param: numZeros	number of leading zeros
+ *
  * return: void
  * 
  * brief: The function converts the integer value into its base 10 character
  * represenation. The result is written to the memory where retStr pointer points
  *
  * *******************************************************************************/
-void convertIntToString(uint32_t num, char *retStr){
+void convertIntToString(uint32_t num, char *retStr,int numZeros){
 
 	int i=0;
 
@@ -30,7 +32,12 @@ void convertIntToString(uint32_t num, char *retStr){
 		num /= 10;
 		i++;
 	}
-
+	if(i < numZeros){
+		while(i<numZeros){
+			retStr[i] = '0';
+			i++;
+		}
+	}
 	reverseString(retStr, i);
 
 	/* '\0' is appended at the end */

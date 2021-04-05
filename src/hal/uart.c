@@ -166,7 +166,7 @@ char tempStr[12];
 
 void UARTPrintNumToString(uint32_t num){
 	
-	convertIntToString(num, tempStr);
+	convertIntToString(num, tempStr,4);
 
 	UARTSendString(tempStr);
 	
