@@ -17,7 +17,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
-
+#include "app.h"
 
 int main(void){
 
@@ -26,11 +26,12 @@ int main(void){
 	SystemInit();
 
 	/* Call the init task for application */
+	app_tasks_setup();
 
+	//volatile uint32_t temp = __SADD8(0x5a5a5a5a,0xa5a5a5a5);
 	/* Start FreeRTOS */
 
-
-
+	vTaskStartScheduler();
 
 	/* control should never reach to this point */
 	while(1){	

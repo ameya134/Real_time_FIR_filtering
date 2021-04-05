@@ -12,6 +12,7 @@
 
 
 sources = src/main.c \
+	  src/app.c \
 	  src/startup_gcc.c \
 	  src/system_tm4c.c \
 	  src/FreeRTOS/tasks.c \
