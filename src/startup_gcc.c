@@ -60,7 +60,6 @@ extern void SysTick_Handler(void);
 extern void PendSV_Handler(void);
 extern void SVC_Handler(void);
 
-extern void timer0_handler(void);
 
 //*****************************************************************************
 //
@@ -121,7 +120,7 @@ void (* const g_pfnVectors[])(void) =
     IntDefaultHandler,                      // ADC Sequence 2
     IntDefaultHandler,                      // ADC Sequence 3
     IntDefaultHandler,                      // Watchdog timer
-    timer0_handler,                         // Timer 0 subtimer A
+    IntDefaultHandler,                      // Timer 0 subtimer A
     IntDefaultHandler,                      // Timer 0 subtimer B
     IntDefaultHandler,                      // Timer 1 subtimer A
     IntDefaultHandler,                      // Timer 1 subtimer B

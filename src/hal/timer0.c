@@ -26,13 +26,20 @@ void init_timer0(uint32_t loadVal)
 
 	/* Disable the timer and clear previous configuration
 	 * before doing the configuration */
-	TIMER0_CTL_R	&= ~(1U << 0);
+	TIMER0_CTL_R	&= ~(TIMER_CTL_TAEN);
 	TIMER0_CFG_R	= 0x0;
 
 	/* Configure timer mode
 	 * set periodic mode and enable interrupt */
 	TIMER0_TAMR_R	|= (0x2 << 0);
-	
+
+#if( TIMER0A_GENERATE_ADC_TRIG == 1)
+	TIMER0_CTL_R	|= TIMER_CTL_TAOTE;
+	TIMER0_ADCEV_R	|= TIMER_ADCEV_TATOADCEN;
+#endif
+
+
+#if( TIMER0A_GENERATE_INTERRUPT == 1 )	
 	/* set interrupt mask to generate periodic interrupt */
 	TIMER0_IMR_R	|= (1U <<0);
 	NVIC_EN0_R	|= (1U <<TIMER0A_INT_NUM);
@@ -46,7 +53,11 @@ void init_timer0(uint32_t loadVal)
 	 *
 	 * Higher numerical value corresponds to lower logical priotiy level.*/
 	NVIC_PRI4_R	=  ( ( TIMER0A_INT_NVIC_PRIO << (8 - configPRIO_BITS) ) << 3*8 );
-	
+#else
+	TIMER0_TAMR_R	|= (0x1 << 12);
+#endif
+
+
 	/* load the timer value */
 	TIMER0_TAILR_R	= loadVal;
 
@@ -57,6 +68,7 @@ void init_timer0(uint32_t loadVal)
 }
 
 
+#if(TIMER0A_GENERATE_INTERRUPT == 1)
 void timer0_handler(void)
 {
 	/* clear the interrrupt bit */
@@ -64,3 +76,4 @@ void timer0_handler(void)
 	
 	return;
 }
+#endif

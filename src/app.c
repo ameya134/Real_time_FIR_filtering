@@ -15,11 +15,16 @@
 
 #include "main.h"
 #include "app.h"
+#include "string.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
 
 #include "bsp.h"
+#include "adc.h"
+#include "timer0.h"
+#include "uart.h"
+
 
 
 #if( LED_BLINK_ENABLE == 1)
@@ -38,11 +43,34 @@ void LED_blink_task(void *param)
 #endif
 
 
+
+void ADC_val_update_task(void *param)
+{
+
+	init_timer0((uint32_t) SystemCoreClock/TIMER0_FREQUENCY_HZ);	
+	UARTSendString("timer_initialized\n\r");
+	ADC_init();
+	
+	UARTSendString("Welcome\n\rADC val:\n\r");
+
+	for(;;){
+		UARTSendString("\b\b\b\b");
+		UARTPrintNumToString((uint32_t) ADC_get_val());
+		vTaskDelay(500);
+
+	}
+
+	return;
+}
+
+
+
 void app_tasks_setup(void)
 {
 
-#if( LED_BLINK_ENABLE == 1)
 	BaseType_t xRetVal;
+
+#if( LED_BLINK_ENABLE == 1)
 	static TaskHandle_t xHandleLedTask = NULL;
 
 	xRetVal = xTaskCreate(
@@ -59,8 +87,24 @@ void app_tasks_setup(void)
 	}
 #endif
 
+	static TaskHandle_t xHandleADCTask = NULL;
+
+	xRetVal = xTaskCreate(
+			&ADC_val_update_task, 	/* task handler pointer */
+			"LED_BLINK",		/* task name */
+			256,			/* stack size in words */
+			(void *)0,		/* param for task */
+			LED_BLINK_PRIO-1,	/* priority of task */
+			&xHandleADCTask		/* task handle variable */
+			);
+	if(xRetVal == 0)
+	{
+		while(1);
+	}
 
 
+	UARTSendString("Tasks Initialized. Starting Scheduler");
 	return;
 }
+
 

@@ -61,7 +61,7 @@ void ADC_init(void)
 	 * */
 
 	ADC0_ACTSS_R &= ~(ADC_ACTSS_ASEN0);
-	ADC0_EMUX_R |= (ADC_EMUX_EM0_M & ADC_EMUX_EM0_ALWAYS); /*default*/
+	ADC0_EMUX_R |= (ADC_EMUX_EM0_M & ADC_EMUX_EM0_TIMER); /*default*/
 	ADC0_SSMUX0_R |= (0x0 << ADC_SSMUX0_MUX0_S);
 	ADC0_SSCTL0_R |= (ADC_SSCTL0_IE0 | ADC_SSCTL0_END0);
 
@@ -75,12 +75,12 @@ uint16_t ADC_get_val(void)
 {
 
 	/* TRIGGERT SS0 USING SOFTWARE */
-	ADC0_PSSI_R = ADC_PSSI_SS0;
+	//ADC0_PSSI_R = ADC_PSSI_SS0;
 
 	/* wait while Raw Interrupt status is 0 */
-	while(!(ADC0_RIS_R & ADC_RIS_INR0));
+	//while(!(ADC0_RIS_R & ADC_RIS_INR0));
 	/* clear the RIS by Setting ISC register bit */
-	ADC0_ISC_R |= (ADC_ISC_IN0);
+	//ADC0_ISC_R |= (ADC_ISC_IN0);
 
 	return (ADC_SSFIFO0_DATA_M & ADC0_SSFIFO0_R);
 }

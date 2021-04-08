@@ -4,6 +4,7 @@
 #include "app.h"
 
 #include "bsp.h"
+#include "uart.h"
 
 /* system related functions and declarations */
 
@@ -22,6 +23,7 @@ void SystemInit(void){
 	INIT_LED_1();
 #endif
 
+	UARTInit((uint32_t)115200);
 
 	return;
 }

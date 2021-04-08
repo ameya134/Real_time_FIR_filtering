@@ -23,6 +23,8 @@
 #endif
 
 
+#define TIMER0_FREQUENCY_HZ	44100
+
 
 void app_tasks_setup(void);
 
