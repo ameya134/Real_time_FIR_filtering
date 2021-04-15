@@ -1,0 +1,18 @@
+# This is a gitignore file.
+# object files, dependacy files, map files, executables 
+# etc are ignored from git verion control.
+
+# ignore executables
+*.elf
+
+# ignore map files
+*.map
+
+# ignore object files
+*.o
+
+# ignore dependacy files
+*.d
+
+# ignore assembly/disassembly files
+*.s
