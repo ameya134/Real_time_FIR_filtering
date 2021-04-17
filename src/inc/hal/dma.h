@@ -51,7 +51,7 @@ struct DMA_control_table{
 
 
 
-void DMA_init(uint32_t *DMACTLBASE_ptr);
+void DMA_init(void);
 
 void DMA_configure_channel(uint8_t channel_no,uint8_t channel_encoding,
 		uint32_t *src_end_ptr,uint32_t *dst_end_ptr, struct DMA_control_word *control_word);

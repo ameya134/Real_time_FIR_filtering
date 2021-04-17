@@ -46,10 +46,6 @@ void LED_blink_task(void *param)
 
 void ADC_val_update_task(void *param)
 {
-
-	init_timer0((uint32_t) SystemCoreClock/TIMER0_FREQUENCY_HZ);	
-	UARTSendString("timer_initialized\n\r");
-	ADC_init();
 	
 	UARTSendString("Welcome\n\rADC val:\n\r");
 

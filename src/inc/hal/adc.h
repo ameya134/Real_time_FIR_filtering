@@ -13,8 +13,28 @@
 #define _ADC_H
 
 #include "tm4c129encpdt.h"
-
 #include "main.h"
+
+
+#define ADC_USE_DMA	1
+
+
+#if( ADC_USE_DMA == 1)
+
+#include "dma.h"
+
+
+#define ADC_DMA_BUF_LEN 32
+uint16_t ADC_udma_buffer[ADC_DMA_BUF_LEN]={0};
+
+
+void ADC0_sequencer0_handler(void);
+
+#endif
+
+
+
+
 
 void ADC_init(void);
 uint16_t ADC_get_val(void);

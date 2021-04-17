@@ -14,7 +14,7 @@
 #include "dma.h"
 
 
-void DMA_init(uint32_t *DMACTLBASE_ptr)
+void DMA_init(void)
 {
 	/* Enable the clock to the dma perpheral */
 	SYSCTL_RCGCDMA_R |= SYSCTL_RCGCDMA_R0;

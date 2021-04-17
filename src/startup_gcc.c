@@ -60,6 +60,7 @@ extern void SysTick_Handler(void);
 extern void PendSV_Handler(void);
 extern void SVC_Handler(void);
 
+extern void ADC0_sequencer0_handler(void);
 
 //*****************************************************************************
 //
@@ -115,7 +116,7 @@ void (* const g_pfnVectors[])(void) =
     IntDefaultHandler,                      // PWM Generator 1
     IntDefaultHandler,                      // PWM Generator 2
     IntDefaultHandler,                      // Quadrature Encoder 0
-    IntDefaultHandler,                      // ADC Sequence 0
+    ADC0_sequencer0_handler,                // ADC Sequence 0
     IntDefaultHandler,                      // ADC Sequence 1
     IntDefaultHandler,                      // ADC Sequence 2
     IntDefaultHandler,                      // ADC Sequence 3

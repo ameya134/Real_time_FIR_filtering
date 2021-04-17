@@ -21,6 +21,45 @@
  *
  * */
 
+#if( ADC_USE_DMA == 1)
+
+struct DMA_control_word ADC_channel_control_word = {
+	.DESTINC	= 0x1, /* 16 bit increment */
+	.DESTSIZE	= 0x1, /* 16 bit data size */
+	.SRCINC		= 0x3, /* No increment */
+	.SRCSIZE	= 0x1, /* 16 bit data size */
+	/* .reserved0 */
+	.DESTPROT0	= 0x0, /* non privilaged access */
+	/* .reserved1 */
+	.SRCPROT0	= 0x0, /* non privilaged access */
+	.ARBSIZE	= 0x2, /* arbitrate after 4 transfers (fifo half full for ss0) */
+	.XFERSIZE	= (ADC_DMA_BUF_LEN -1), /* Transfer size */
+	.NXTUSEBURST	= 0x0, /* no next use burst for last transfers */
+	.XFERMODE	= 0x1 /* Basic mode */
+};
+
+
+void ADC_udma_channel_config(void)
+{
+	DMA_configure_channel( 14, /* channel no 14 for adc0 ss0 */
+		       	0, /* channel coding 0 for adc0 ss0 */
+			ADC0_SSFIFO0_R, /* source end pointer */
+			&ADC_udma_buffer[ADC_DMA_BUF_LEN -1], /* destination end pointer */
+			&ADC_channel_control_word /* channel control word */
+			);
+	return;
+}
+
+
+void ADC0_sequencer0_handler(void)
+{
+	
+
+	return;
+}
+
+#endif
+
 void ADC_init(void)
 {
 
@@ -61,10 +100,15 @@ void ADC_init(void)
 	 * */
 
 	ADC0_ACTSS_R &= ~(ADC_ACTSS_ASEN0);
-	ADC0_EMUX_R |= (ADC_EMUX_EM0_M & ADC_EMUX_EM0_TIMER); /*default*/
+	ADC0_EMUX_R |= (ADC_EMUX_EM0_M & ADC_EMUX_EM0_TIMER); /*timer trigger*/
 	ADC0_SSMUX0_R |= (0x0 << ADC_SSMUX0_MUX0_S);
 	ADC0_SSCTL0_R |= (ADC_SSCTL0_IE0 | ADC_SSCTL0_END0);
 
+#if( ADC_USE_DMA == 1)
+	ADC0_ACTSS_R |= (ADC_ACTSS_ADEN0);
+	ADC0_IM_R |= (ADC_IM_DMAMASK0);
+	ADC_udma_channel_config();
+#endif
 	/* enable SS0 */
 	ADC0_ACTSS_R |= ADC_ACTSS_ASEN0;
 
@@ -82,7 +126,9 @@ uint16_t ADC_get_val(void)
 	/* clear the RIS by Setting ISC register bit */
 	//ADC0_ISC_R |= (ADC_ISC_IN0);
 
-	return (ADC_SSFIFO0_DATA_M & ADC0_SSFIFO0_R);
+	//return (ADC_SSFIFO0_DATA_M & ADC0_SSFIFO0_R);
+	
+	return ADC_udma_buffer[0];
 }
 
 
