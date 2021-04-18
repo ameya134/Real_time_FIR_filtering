@@ -23,7 +23,7 @@ void DMA_init(void)
 	/* Set dma master enable bit and set the
 	 * channel control base pointer*/
 	UDMA_CFG_R |= UDMA_CFG_MASTEN;
-	UDMA_CTLBASE_R = (uint32_t) DMACTLBASE_ptr;
+	UDMA_CTLBASE_R = (uint32_t) &DMA_control_table;
 
 	return;
 }

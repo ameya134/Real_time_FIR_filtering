@@ -23,9 +23,9 @@
 
 #include "dma.h"
 
-
+#define ADC_DMA_CHANNEL_NO	14
+#define ADC_DMA_CHANNEL_ENCODE	0
 #define ADC_DMA_BUF_LEN 32
-uint16_t ADC_udma_buffer[ADC_DMA_BUF_LEN]={0};
 
 
 void ADC0_sequencer0_handler(void);

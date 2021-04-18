@@ -23,6 +23,8 @@
 
 #if( ADC_USE_DMA == 1)
 
+uint16_t ADC_udma_buffer[ADC_DMA_BUF_LEN]={0};
+
 struct DMA_control_word ADC_channel_control_word = {
 	.DESTINC	= 0x1, /* 16 bit increment */
 	.DESTSIZE	= 0x1, /* 16 bit data size */
@@ -41,10 +43,10 @@ struct DMA_control_word ADC_channel_control_word = {
 
 void ADC_udma_channel_config(void)
 {
-	DMA_configure_channel( 14, /* channel no 14 for adc0 ss0 */
-		       	0, /* channel coding 0 for adc0 ss0 */
-			ADC0_SSFIFO0_R, /* source end pointer */
-			&ADC_udma_buffer[ADC_DMA_BUF_LEN -1], /* destination end pointer */
+	DMA_configure_channel( ADC_DMA_CHANNEL_NO, /* channel no 14 for adc0 ss0 */
+		       	ADC_DMA_CHANNEL_ENCODE, /* channel coding 0 for adc0 ss0 */
+			(uint32_t *)&ADC0_SSFIFO0_R, /* source end pointer */
+			(uint32_t *)&ADC_udma_buffer[ADC_DMA_BUF_LEN -1], /* destination end pointer */
 			&ADC_channel_control_word /* channel control word */
 			);
 	return;
@@ -53,7 +55,9 @@ void ADC_udma_channel_config(void)
 
 void ADC0_sequencer0_handler(void)
 {
-	
+	ADC0_ISC_R &= ~(ADC_ISC_DMAIN0);
+
+	DMA_start_transfer(ADC_DMA_CHANNEL_NO);
 
 	return;
 }

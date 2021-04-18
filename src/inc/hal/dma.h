@@ -18,20 +18,20 @@
 /* Structures for DMA channel control table */
 struct DMA_control_word{
 
-	uint8_t DESTINC		: 2; /* bit 31:30 destination address increment */
-	uint8_t DESTSIZE	: 2; /* bit 29:28 destination data size */
-	uint8_t SRCINC		: 2; /* bit 27:26 source address increment */
-	uint8_t SRCSIZE		: 2; /* bit 25:24 source data size */
-	uint8_t reserved0	: 2; /* bit 23:22 reserved */
-	uint8_t DESTPROT0	: 1; /* bit 21 destination privilage access */
-	uint8_t reserved1	: 2; /* bit 20:19 reserved */
-	uint8_t SRCPROT0	: 1; /* bit 18 source privilage access */
-	uint8_t ARBSIZE		: 4; /* bit 17:14 arbitration size */
+	uint16_t DESTINC	: 2; /* bit 31:30 destination address increment */
+	uint16_t DESTSIZE	: 2; /* bit 29:28 destination data size */
+	uint16_t SRCINC		: 2; /* bit 27:26 source address increment */
+	uint16_t SRCSIZE	: 2; /* bit 25:24 source data size */
+	uint16_t reserved0	: 2; /* bit 23:22 reserved */
+	uint16_t DESTPROT0	: 1; /* bit 21 destination privilage access */
+	uint16_t reserved1	: 2; /* bit 20:19 reserved */
+	uint16_t SRCPROT0	: 1; /* bit 18 source privilage access */
+	uint16_t ARBSIZE	: 4; /* bit 17:14 arbitration size */
 	uint16_t XFERSIZE	: 10;/* bit 13:04 transfer size */
-	uint8_t NXTUSEBURST	: 1; /* bit 03 next use burst */
-	uint8_t XFERMODE	: 3; /* bit 02:00 uDMA transfer mode */
+	uint16_t NXTUSEBURST	: 1; /* bit 03 next use burst */
+	uint16_t XFERMODE	: 3; /* bit 02:00 uDMA transfer mode */
 
-};
+} __attribute__((packed,aligned(1)));
 
 
 struct DMA_control_structure{
