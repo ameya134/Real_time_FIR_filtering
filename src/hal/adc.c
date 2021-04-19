@@ -26,18 +26,19 @@
 uint16_t ADC_udma_buffer[ADC_DMA_BUF_LEN]={0};
 
 struct DMA_control_word ADC_channel_control_word = {
-	.DESTINC	= 0x1, /* 16 bit increment */
-	.DESTSIZE	= 0x1, /* 16 bit data size */
-	.SRCINC		= 0x3, /* No increment */
-	.SRCSIZE	= 0x1, /* 16 bit data size */
-	/* .reserved0 */
-	.DESTPROT0	= 0x0, /* non privilaged access */
-	/* .reserved1 */
-	.SRCPROT0	= 0x0, /* non privilaged access */
-	.ARBSIZE	= 0x2, /* arbitrate after 4 transfers (fifo half full for ss0) */
-	.XFERSIZE	= (ADC_DMA_BUF_LEN -1), /* Transfer size */
+
+	.XFERMODE	= 0x1, /* Basic mode */
 	.NXTUSEBURST	= 0x0, /* no next use burst for last transfers */
-	.XFERMODE	= 0x1 /* Basic mode */
+	.XFERSIZE	= (ADC_DMA_BUF_LEN -1), /* Transfer size */
+	.ARBSIZE	= 0x2, /* arbitrate after 4 transfers (fifo half full for ss0) */
+	.SRCPROT0	= 0x0, /* non privilaged access */
+	/* .reserved1 */
+	.DESTPROT0	= 0x0, /* non privilaged access */
+	/* .reserved0 */
+	.SRCSIZE	= 0x1, /* 16 bit data size */
+	.SRCINC		= 0x3, /* No increment */
+	.DESTSIZE	= 0x1, /* 16 bit data size */
+	.DESTINC	= 0x1, /* 16 bit increment */
 };
 
 
