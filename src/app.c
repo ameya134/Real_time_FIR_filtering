@@ -46,7 +46,9 @@ void LED_blink_task(void *param)
 
 void ADC_val_update_task(void *param)
 {
-	
+	/* start the dma transfer */
+	DMA_start_transfer(ADC_DMA_CHANNEL_NO);
+
 	UARTSendString("Welcome\n\rADC val:\n\r");
 
 	for(;;){

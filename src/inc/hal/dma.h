@@ -42,7 +42,7 @@ struct DMA_control_structure{
 	uint32_t *src_end_ptr; /* pointer to the end of source buffer or source addr */
 	uint32_t *dst_end_ptr; /* pointer to the end of destination buffer or destination addr */
 	struct DMA_control_word control_word; /* conrol word for the channel */
-
+	uint32_t reserved;
 };
 
 
