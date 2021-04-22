@@ -13,7 +13,7 @@
 
 
 #include "tm4c129encpdt.h"
-
+#include "FreeRTOSConfig.h"
 #define LED_BLINK_ENABLE 1
 #if(LED_BLINK_ENABLE == 1)
 
@@ -25,6 +25,7 @@
 
 #define TIMER0_FREQUENCY_HZ	44100
 
+#define configADC_INT_PRIO	(configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY + 1)
 
 void app_tasks_setup(void);
 

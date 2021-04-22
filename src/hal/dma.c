@@ -57,6 +57,18 @@ void DMA_configure_channel(uint8_t channel_no,uint8_t channel_encoding,
 	return;
 }
 
+void DMA_reconfigure_channel(uint8_t channel_no,
+		uint32_t *src_end_ptr,
+		uint32_t *dst_end_ptr,
+		struct DMA_control_word *control_word)
+{
+	DMA_control_table.channel_ctl_struct[channel_no].src_end_ptr = src_end_ptr;
+	DMA_control_table.channel_ctl_struct[channel_no].dst_end_ptr = dst_end_ptr;
+	DMA_control_table.channel_ctl_struct[channel_no].control_word = *control_word;
+
+	return;
+}
+
 
 void DMA_start_transfer(uint8_t channel_no)
 {

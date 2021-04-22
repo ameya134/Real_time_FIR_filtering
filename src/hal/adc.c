@@ -58,8 +58,13 @@ void ADC0_sequencer0_handler(void)
 {
 	ADC0_ISC_R &= ~(ADC_ISC_DMAIN0);
 
+	DMA_reconfigure_channel( ADC_DMA_CHANNEL_NO, /* channel no 14 for adc0 ss0 */
+			(uint32_t *) &ADC0_SSFIFO0_R, /* source end pointer */
+			(uint32_t *) &ADC_udma_buffer[ADC_DMA_BUF_LEN -1], /* desetination end pointer */
+			&ADC_channel_control_word /* channel control_word */
+			);
 	DMA_start_transfer(ADC_DMA_CHANNEL_NO);
-
+	
 	return;
 }
 
@@ -110,8 +115,22 @@ void ADC_init(void)
 	ADC0_SSCTL0_R |= (ADC_SSCTL0_IE0 | ADC_SSCTL0_END0);
 
 #if( ADC_USE_DMA == 1)
+	/* Enable the dma for ss0 
+	 * Enable the bit mask and nvic register for ss0 
+	 * Set the interrupt prio lower (higher number)
+	 * than FreeRTOS maxprio for syscall in order to call the FreeRTOS
+	 * API from interrupt handler 
+	 *
+	 * 3 prio bits have been implemented on tm4c129encpdt. bits are located
+	 * at MSB portion of corresponding 8 bit field in NVIC prio registers
+	 * */
+
 	ADC0_ACTSS_R |= (ADC_ACTSS_ADEN0);
 	ADC0_IM_R |= (ADC_IM_DMAMASK0);
+	
+	NVIC_EN0_R	|= (1U << ADC0_SS0_INT_NUM);
+	NVIC_PRI3_R	|= ( ( ADC0_SS0_INT_NVIC_PRIO << (8 - configPRIO_BITS) ) << 2*8);
+	
 	ADC_udma_channel_config();
 #endif
 	/* enable SS0 */

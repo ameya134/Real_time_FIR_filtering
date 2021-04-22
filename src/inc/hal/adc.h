@@ -14,7 +14,7 @@
 
 #include "tm4c129encpdt.h"
 #include "main.h"
-
+#include "app.h"
 
 #define ADC_USE_DMA	1
 
@@ -25,9 +25,12 @@
 
 #define ADC_DMA_CHANNEL_NO	14
 #define ADC_DMA_CHANNEL_ENCODE	0
-#define ADC_DMA_BUF_LEN 32
+#define ADC_DMA_BUF_LEN 64
 
 
+
+#define ADC0_SS0_INT_NUM	14
+#define ADC0_SS0_INT_NVIC_PRIO	configADC_INT_PRIO
 void ADC0_sequencer0_handler(void);
 
 #endif
