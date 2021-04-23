@@ -56,7 +56,8 @@ void ADC_udma_channel_config(void)
 
 void ADC0_sequencer0_handler(void)
 {
-	ADC0_ISC_R &= ~(ADC_ISC_DMAIN0);
+	/* clear the interrupt by writing 1 to ADC0_ISC_R register*/
+	ADC0_ISC_R |= (ADC_ISC_DMAIN0);
 
 	DMA_reconfigure_channel( ADC_DMA_CHANNEL_NO, /* channel no 14 for adc0 ss0 */
 			(uint32_t *) &ADC0_SSFIFO0_R, /* source end pointer */
