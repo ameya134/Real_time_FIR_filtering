@@ -36,7 +36,7 @@ void SystemInit(void){
 	ADC_init();
 
 	/* Initialize the timer */
-	init_timer0((uint32_t) SystemCoreClock/TIMER0_FREQUENCY_HZ);
+	//init_timer0((uint32_t) SystemCoreClock/TIMER0_FREQUENCY_HZ);
         UARTSendString("timer_initialized\n\r");
 	
 	

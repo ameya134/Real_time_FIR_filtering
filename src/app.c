@@ -19,6 +19,7 @@
 
 #include "FreeRTOS.h"
 #include "task.h"
+#include "semphr.h"
 
 #include "bsp.h"
 #include "adc.h"
@@ -44,18 +45,31 @@ void LED_blink_task(void *param)
 
 
 
-void ADC_val_update_task(void *param)
+SemaphoreHandle_t ADC_data_ready;
+
+void FIR_filter_task(void *param)
 {
+	init_timer0((uint32_t) SystemCoreClock/TIMER0_FREQUENCY_HZ);
+	ADC_data_ready = xSemaphoreCreateBinary();
+	INIT_LED_2();
+	UARTSendString("FIR filtering started...\n\r");
+	
 	/* start the dma transfer */
 	DMA_start_transfer(ADC_DMA_CHANNEL_NO);
 
-	UARTSendString("Welcome\n\rADC val:\n\r");
-
 	for(;;){
-		UARTSendString("\b\b\b\b");
-		UARTPrintNumToString((uint32_t) ADC_get_val());
-		vTaskDelay(500);
-
+		
+		/* wait for semaphore to be released when 
+		 * DMA completes ADC data transfer */
+		if(pdTRUE == xSemaphoreTake(ADC_data_ready,0xffff)){	
+			/* process the data from ADC */
+			LED_TOGGLE_STATE(LED2_PORT,LED2_PIN);
+		}else{
+			UARTSendString("ERROR: Unable to aquire ADC data semaphore\n\r");
+			while(1);
+		}
+		
+		
 	}
 
 	return;
@@ -85,15 +99,15 @@ void app_tasks_setup(void)
 	}
 #endif
 
-	static TaskHandle_t xHandleADCTask = NULL;
+	static TaskHandle_t xHandleFIRFilterTask = NULL;
 
 	xRetVal = xTaskCreate(
-			&ADC_val_update_task, 	/* task handler pointer */
+			&FIR_filter_task, 	/* task handler pointer */
 			"LED_BLINK",		/* task name */
 			256,			/* stack size in words */
 			(void *)0,		/* param for task */
-			LED_BLINK_PRIO-1,	/* priority of task */
-			&xHandleADCTask		/* task handle variable */
+			FIR_FILTER_PRIO,	/* priority of task */
+			&xHandleFIRFilterTask	/* task handle variable */
 			);
 	if(xRetVal == 0)
 	{

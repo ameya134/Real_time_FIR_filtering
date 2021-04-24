@@ -12,6 +12,10 @@
 
 #include "adc.h"
 
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
+
 /*
  * void ADC_init (void)
  *
@@ -23,7 +27,11 @@
 
 #if( ADC_USE_DMA == 1)
 
-uint16_t ADC_udma_buffer[ADC_DMA_BUF_LEN]={0};
+uint16_t ADC_udma_buffer_A[ADC_DMA_BUF_LEN]={0};
+uint16_t ADC_udma_buffer_B[ADC_DMA_BUF_LEN]={0};
+
+int ADC_buf_var = 1;
+
 
 struct DMA_control_word ADC_channel_control_word = {
 
@@ -47,25 +55,53 @@ void ADC_udma_channel_config(void)
 	DMA_configure_channel( ADC_DMA_CHANNEL_NO, /* channel no 14 for adc0 ss0 */
 		       	ADC_DMA_CHANNEL_ENCODE, /* channel coding 0 for adc0 ss0 */
 			(uint32_t *)&ADC0_SSFIFO0_R, /* source end pointer */
-			(uint32_t *)&ADC_udma_buffer[ADC_DMA_BUF_LEN -1], /* destination end pointer */
+			(uint32_t *)&ADC_udma_buffer_A[ADC_DMA_BUF_LEN -1], /* destination end pointer */
 			&ADC_channel_control_word /* channel control word */
 			);
 	return;
 }
 
 
+extern SemaphoreHandle_t ADC_data_ready;
+BaseType_t xHigherPriorityTaskWoken;
+
 void ADC0_sequencer0_handler(void)
 {
 	/* clear the interrupt by writing 1 to ADC0_ISC_R register*/
 	ADC0_ISC_R |= (ADC_ISC_DMAIN0);
 
-	DMA_reconfigure_channel( ADC_DMA_CHANNEL_NO, /* channel no 14 for adc0 ss0 */
-			(uint32_t *) &ADC0_SSFIFO0_R, /* source end pointer */
-			(uint32_t *) &ADC_udma_buffer[ADC_DMA_BUF_LEN -1], /* desetination end pointer */
-			&ADC_channel_control_word /* channel control_word */
-			);
+	/* Use buffers A and B alternately */
+
+	if(ADC_buf_var == 0){
+		ADC_buf_var = 1;
+		DMA_reconfigure_channel( ADC_DMA_CHANNEL_NO, /* channel no 14 for adc0 ss0 */
+				(uint32_t *) &ADC0_SSFIFO0_R, /* source end pointer */
+				(uint32_t *) &ADC_udma_buffer_A[ADC_DMA_BUF_LEN -1], /* desetination end pointer */
+				&ADC_channel_control_word /* channel control_word */
+				);
+	}
+	else{
+		ADC_buf_var = 0;
+		DMA_reconfigure_channel( ADC_DMA_CHANNEL_NO, /* channel no 14 for adc0 ss0 */
+				(uint32_t *) &ADC0_SSFIFO0_R, /* source end pointer */
+				(uint32_t *) &ADC_udma_buffer_B[ADC_DMA_BUF_LEN -1], /* desetination end pointer */
+				&ADC_channel_control_word /* channel control_word */
+				);
+
+	}
+
+
 	DMA_start_transfer(ADC_DMA_CHANNEL_NO);
-	
+
+	/* Release the ADC_data_ready semaphore to start
+	 * ADC data processing by FIR_filter_task */
+	xHigherPriorityTaskWoken = pdFALSE;
+	xSemaphoreGiveFromISR(ADC_data_ready,&xHigherPriorityTaskWoken);
+
+	if(xHigherPriorityTaskWoken == pdTRUE){
+		portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+	}
+
 	return;
 }
 
@@ -146,14 +182,8 @@ uint16_t ADC_get_val(void)
 	/* TRIGGERT SS0 USING SOFTWARE */
 	//ADC0_PSSI_R = ADC_PSSI_SS0;
 
-	/* wait while Raw Interrupt status is 0 */
-	//while(!(ADC0_RIS_R & ADC_RIS_INR0));
-	/* clear the RIS by Setting ISC register bit */
-	//ADC0_ISC_R |= (ADC_ISC_IN0);
-
-	//return (ADC_SSFIFO0_DATA_M & ADC0_SSFIFO0_R);
+	return (ADC_SSFIFO0_DATA_M & ADC0_SSFIFO0_R);
 	
-	return ADC_udma_buffer[0];
 }
 
 
