@@ -27,6 +27,7 @@ sources = src/main.c \
 	  src/hal/pwm.c \
 	  src/hal/timer0.c \
 	  src/hal/adc.c \
-	  src/hal/dma.c
+	  src/hal/dma.c \
+	  src/hal/clock.c
 
 

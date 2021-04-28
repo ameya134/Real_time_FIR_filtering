@@ -3,6 +3,7 @@
 
 #include "app.h"
 
+#include "clock.h"
 #include "bsp.h"
 #include "uart.h"
 #include "dma.h"
@@ -12,7 +13,7 @@
 /* system related functions and declarations */
 
 
-uint32_t SystemCoreClock = 16000000; /* System Base Clock Frequency in Hz */
+uint32_t SystemCoreClock = SYSCLOCK_FREQ_Hz; /* System Base Clock Frequency in Hz */
 
 
 void SystemInit(void){
@@ -20,6 +21,9 @@ void SystemInit(void){
 	/* Do any system initialization that is required */
 
 	/* Init required peripherals */
+
+	/* Init system clock and set the PLL */
+	configure_pll_clock(MOSC_CLOCK_SRC,0U,4U,96U,0U,(4U-1U));
 
 	/* Init UART */
 	UARTInit((uint32_t)115200);
@@ -37,9 +41,8 @@ void SystemInit(void){
 
 	/* Initialize the timer */
 	//init_timer0((uint32_t) SystemCoreClock/TIMER0_FREQUENCY_HZ);
-        UARTSendString("timer_initialized\n\r");
+	UARTSendString("timer_initialized\n\r");
 	
-	
-	
+		
 	return;
 }
