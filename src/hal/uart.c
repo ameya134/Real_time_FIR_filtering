@@ -67,7 +67,9 @@ void UARTInit(uint32_t baudrate){
 
 	UART0_IBRD_R = (uint32_t) SYSCLOCK_FREQ_Hz / (16 * baudrate);
 	//float temp = 0.425347;
-	UART0_FBRD_R = (uint32_t) 44;//((temp *64) + 0.5);
+	//UART0_FBRD_R = (uint32_t) 44;//((temp *64) + 0.5);
+	//float temp = 0.104;
+	UART0_FBRD_R = (uint32_t) 7;//((temp *64) + 0.5);
 
 	UART0_LCRH_R |= (0x03<<5);
 

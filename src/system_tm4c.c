@@ -23,7 +23,7 @@ void SystemInit(void){
 	/* Init required peripherals */
 
 	/* Init system clock and set the PLL */
-	configure_pll_clock(MOSC_CLOCK_SRC,0U,4U,96U,0U,(4U-1U));
+	configure_pll_clock(MOSC_CLOCK_SRC,0U,4U,96U,0U,(4U-1U),5);
 
 	/* Init UART */
 	UARTInit((uint32_t)115200);

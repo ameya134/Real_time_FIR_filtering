@@ -16,6 +16,8 @@
 #include "task.h"
 #include "semphr.h"
 
+#include "bsp.h"
+
 /*
  * void ADC_init (void)
  *
@@ -67,8 +69,15 @@ BaseType_t xHigherPriorityTaskWoken;
 
 void ADC0_sequencer0_handler(void)
 {
+	static int count=0;
+
 	/* clear the interrupt by writing 1 to ADC0_ISC_R register*/
 	ADC0_ISC_R |= (ADC_ISC_DMAIN0);
+	count++;
+	if(count == 22050){
+		count = 0;
+		LED_TOGGLE_STATE(LED2_PORT,LED2_PIN);
+	}
 
 	/* Use buffers A and B alternately */
 
@@ -117,7 +126,8 @@ void ADC_init(void)
 
 	/* Set ADC clock to use PLL */
 
-	ADC0_CC_R |= (ADC_CC_CS_M & ADC_CC_CS_SYSPLL);
+	ADC0_CC_R |= ((ADC_CC_CS_M & ADC_CC_CS_SYSPLL)
+			| (ADC_CC_CLKDIV_M & ((30U-1U) << ADC_CC_CLKDIV_S )) );
 	
 	/* enable clock to port E*/
 	SYSCTL_RCGCGPIO_R |= SYSCTL_RCGCGPIO_R4;

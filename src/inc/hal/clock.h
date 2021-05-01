@@ -20,6 +20,6 @@
 #define PIOSC_FREQ_Hz   16000000 /* Precision internal oscilator at 16MHz */
 #define MOSC_FREQ_Hz    25000000 /* Main external crystal oscilator at 25MHz */
 
-void configure_pll_clock(int clock_src,int Q, int N,int MINT, int MFRAC,int PSYSDIV);
+void configure_pll_clock(int clock_src,int Q, int N,int MINT, int MFRAC,int PSYSDIV,int MEMTIM_PARAM);
 
 #endif
