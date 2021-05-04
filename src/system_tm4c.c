@@ -42,7 +42,7 @@ void SystemInit(void){
 	/* Initialize the timer */
 	//init_timer0((uint32_t) SystemCoreClock/TIMER0_FREQUENCY_HZ);
 	UARTSendString("timer_initialized\n\r");
-	
+	INIT_LED_3();
 		
 	return;
 }

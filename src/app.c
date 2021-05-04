@@ -46,12 +46,12 @@ void LED_blink_task(void *param)
 
 
 SemaphoreHandle_t ADC_data_ready;
-
+int count=0;
 void FIR_filter_task(void *param)
 {
 	init_timer0((uint32_t) SystemCoreClock/TIMER0_FREQUENCY_HZ);
 	ADC_data_ready = xSemaphoreCreateBinary();
-	INIT_LED_2();
+	
 	UARTSendString("FIR filtering started...\n\r");
 	
 	/* start the dma transfer */
@@ -63,6 +63,12 @@ void FIR_filter_task(void *param)
 		 * DMA completes ADC data transfer */
 		if(pdTRUE == xSemaphoreTake(ADC_data_ready,0xffff)){	
 			/* process the data from ADC */
+			count++;
+			if(count == 689){
+				count = 0;
+				LED_TOGGLE_STATE(LED3_PORT,LED3_PIN);
+				UARTSendString("\n\rFIR_TASK");
+			}
 			LED_TOGGLE_STATE(LED2_PORT,LED2_PIN);
 		}else{
 			UARTSendString("ERROR: Unable to aquire ADC data semaphore\n\r");

@@ -25,7 +25,7 @@
 
 #define ADC_DMA_CHANNEL_NO	14
 #define ADC_DMA_CHANNEL_ENCODE	0
-#define ADC_DMA_BUF_LEN 64
+#define ADC_DMA_BUF_LEN 16
 
 
 

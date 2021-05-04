@@ -17,7 +17,7 @@
 #include "semphr.h"
 
 #include "bsp.h"
-
+#include "uart.h"
 /*
  * void ADC_init (void)
  *
@@ -69,15 +69,9 @@ BaseType_t xHigherPriorityTaskWoken;
 
 void ADC0_sequencer0_handler(void)
 {
-	static int count=0;
 
 	/* clear the interrupt by writing 1 to ADC0_ISC_R register*/
 	ADC0_ISC_R |= (ADC_ISC_DMAIN0);
-	count++;
-	if(count == 22050){
-		count = 0;
-		LED_TOGGLE_STATE(LED2_PORT,LED2_PIN);
-	}
 
 	/* Use buffers A and B alternately */
 
