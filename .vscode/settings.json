@@ -3,6 +3,8 @@
         "clock.h": "c",
         "bsp.h": "c",
         "main.h": "c",
-        "string.h": "c"
-    }
+        "string.h": "c",
+        "convolution.h": "c"
+    },
+    "cortex-debug.gdbPath": "/usr/bin/gdb-multiarch"
 }

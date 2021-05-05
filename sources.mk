@@ -28,6 +28,6 @@ sources = src/main.c \
 	  src/hal/timer0.c \
 	  src/hal/adc.c \
 	  src/hal/dma.c \
-	  src/hal/clock.c
-
+	  src/hal/clock.c \
+	  src/convolution.c
 

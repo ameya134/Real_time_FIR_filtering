@@ -16,6 +16,7 @@
 #include "main.h"
 #include "app.h"
 #include "string.h"
+#include "convolution.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -44,9 +45,17 @@ void LED_blink_task(void *param)
 #endif
 
 
+int count=0;
+
+extern int ADC_buf_var;
+extern uint16_t ADC_udma_buffer_A[ADC_DMA_BUF_LEN];
+extern uint16_t ADC_udma_buffer_B[ADC_DMA_BUF_LEN];
 
 SemaphoreHandle_t ADC_data_ready;
-int count=0;
+uint16_t test_filter_ip[16] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16};
+uint16_t filter_output[2*16 -1]={0};
+uint16_t FIR_h_n[16] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16};
+
 void FIR_filter_task(void *param)
 {
 	init_timer0((uint32_t) SystemCoreClock/TIMER0_FREQUENCY_HZ);
@@ -70,6 +79,19 @@ void FIR_filter_task(void *param)
 				UARTSendString("\n\rFIR_TASK");
 			}
 			LED_TOGGLE_STATE(LED2_PORT,LED2_PIN);
+
+
+			/* use buffer that has been updated by uDMA */
+			/*if(ADC_buf_var == 0){
+				convolve_16x16(ADC_udma_buffer_A,FIR_h_n,filter_output);
+			}
+			else{
+				convolve_16x16(ADC_udma_buffer_B,FIR_h_n,filter_output);
+			}*/
+
+			/* Test input */
+			convolve_16x16(test_filter_ip,FIR_h_n,filter_output);
+			
 		}else{
 			UARTSendString("ERROR: Unable to aquire ADC data semaphore\n\r");
 			while(1);

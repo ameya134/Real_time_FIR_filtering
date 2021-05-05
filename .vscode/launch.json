@@ -5,29 +5,14 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "(gdb) Launch",
-            "type": "cppdbg",
+            "cwd": "${workspaceRoot}",
+            "executable": "${workspaceRoot}/tm4c.elf",
+            "name": "Debug Microcontroller",
             "request": "launch",
-            "program": "${workspaceFolder}/tm4c.elf",
-            "args": [
-                "${workspaceFolder}/tm4c.elf"
-            ],
-            "stopAtEntry": true,
-            "cwd": "${workspaceFolder}",
-            "miDebuggerPath": "/usr/bin/gdb-multiarch",
-            "environment": [],
-            "externalConsole": false,
-            "setupCommands": [
-                {
-                    "description": "Enable pretty-printing for gdb",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
-                },
-                {
-                    "description": "connect to target",
-                    "text": "target remote localhost:3333",
-                    "ignoreFailures": false
-                }
+            "type": "cortex-debug",
+            "servertype": "openocd",
+            "configFiles": [
+                "/usr/share/openocd/scripts/board/ek-tm4c1294xl.cfg"
             ]
         }
 
