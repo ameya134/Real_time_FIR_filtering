@@ -13,6 +13,7 @@
 
 #include "main.h"
 #include "system_tm4c.h"
+#include "../test/test.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -21,7 +22,11 @@
 
 int main(void){
 
+#if( PERFORM_TEST == 1 )
 
+	test_main();
+
+#endif
 	/* system init */
 	SystemInit();
 

@@ -20,7 +20,7 @@
 void init_timer0(uint32_t loadVal)
 {
 	/* enable clocking to timer module */
-	SYSCTL_RCGCTIMER_R |= (1U << 0);
+	SYSCTL_RCGCTIMER_R |= SYSCTL_RCGCTIMER_R0;
 	/* wait till the peripheral is ready */
 	while(!(SYSCTL_PRTIMER_R & SYSCTL_PRTIMER_R0));
 
@@ -30,7 +30,7 @@ void init_timer0(uint32_t loadVal)
 	TIMER0_CFG_R	= 0x0;
 
 	/* Configure timer mode
-	 * set periodic mode and enable interrupt */
+	 * set periodic mode and enable interrupt if flag is set */
 	TIMER0_TAMR_R	|= (0x2 << 0);
 
 #if( TIMER0A_GENERATE_ADC_TRIG == 1)

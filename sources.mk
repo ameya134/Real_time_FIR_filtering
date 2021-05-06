@@ -29,5 +29,7 @@ sources = src/main.c \
 	  src/hal/adc.c \
 	  src/hal/dma.c \
 	  src/hal/clock.c \
-	  src/convolution.c
+	  src/convolution.c \
+	  src/timestamp.c \
+	  test/test_1.c 
 

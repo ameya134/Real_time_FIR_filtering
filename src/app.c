@@ -54,7 +54,7 @@ extern uint16_t ADC_udma_buffer_B[ADC_DMA_BUF_LEN];
 SemaphoreHandle_t ADC_data_ready;
 uint16_t test_filter_ip[16] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16};
 uint16_t filter_output[2*16 -1]={0};
-uint16_t FIR_h_n[16] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16};
+uint16_t FIR_h_n[16] = {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
 
 void FIR_filter_task(void *param)
 {
@@ -82,15 +82,17 @@ void FIR_filter_task(void *param)
 
 
 			/* use buffer that has been updated by uDMA */
-			/*if(ADC_buf_var == 0){
+			if(ADC_buf_var == 0){
+				memset(ADC_udma_buffer_A,0,ADC_DMA_BUF_LEN*sizeof(*ADC_udma_buffer_A));
 				convolve_16x16(ADC_udma_buffer_A,FIR_h_n,filter_output);
 			}
 			else{
+				memset(ADC_udma_buffer_A,0,ADC_DMA_BUF_LEN*sizeof(*ADC_udma_buffer_B));
 				convolve_16x16(ADC_udma_buffer_B,FIR_h_n,filter_output);
-			}*/
+			}
 
-			/* Test input */
-			convolve_16x16(test_filter_ip,FIR_h_n,filter_output);
+			/* Test input
+			convolve_16x16(test_filter_ip,FIR_h_n,filter_output);*/
 			
 		}else{
 			UARTSendString("ERROR: Unable to aquire ADC data semaphore\n\r");

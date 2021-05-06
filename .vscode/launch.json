@@ -11,6 +11,7 @@
             "request": "launch",
             "type": "cortex-debug",
             "servertype": "openocd",
+            "svdFile": "${workspaceRoot}/tm4c129x-vendor.xml",
             "configFiles": [
                 "/usr/share/openocd/scripts/board/ek-tm4c1294xl.cfg"
             ]

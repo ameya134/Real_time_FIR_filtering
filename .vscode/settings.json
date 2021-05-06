@@ -4,7 +4,8 @@
         "bsp.h": "c",
         "main.h": "c",
         "string.h": "c",
-        "convolution.h": "c"
+        "convolution.h": "c",
+        "stdint.h": "c"
     },
     "cortex-debug.gdbPath": "/usr/bin/gdb-multiarch"
 }

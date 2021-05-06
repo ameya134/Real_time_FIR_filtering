@@ -18,3 +18,4 @@
 *.s
 .vscode/.cortex-debug.peripherals.state.json
 .vscode/.cortex-debug.registers.state.json
+tm4c129x-vendor.xml
