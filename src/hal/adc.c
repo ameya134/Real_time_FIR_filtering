@@ -15,9 +15,11 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "semphr.h"
+#include "app.h"
 
 #include "bsp.h"
 #include "uart.h"
+#include "timer0.h"
 /*
  * void ADC_init (void)
  *
@@ -29,17 +31,20 @@
 
 #if( ADC_USE_DMA == 1)
 
-uint16_t ADC_udma_buffer_A[ADC_DMA_BUF_LEN]={0};
-uint16_t ADC_udma_buffer_B[ADC_DMA_BUF_LEN]={0};
 
-int ADC_buf_var = 1;
+extern volatile int ADC_buf_var;
+extern uint16_t INPUT_BUFFER_A[DATA_BUF_LEN];
+extern uint16_t INPUT_BUFFER_B[DATA_BUF_LEN];
+extern uint16_t OUTPUT_BUFFER_A[DATA_BUF_LEN];
+extern uint16_t OUTPUT_BUFFER_B[DATA_BUF_LEN];
 
+extern struct DMA_control_word TIMER0_channel_control_word;
 
 struct DMA_control_word ADC_channel_control_word = {
 
 	.XFERMODE	= 0x1, /* Basic mode */
 	.NXTUSEBURST	= 0x0, /* no next use burst for last transfers */
-	.XFERSIZE	= (ADC_DMA_BUF_LEN -1), /* Transfer size */
+	.XFERSIZE	= (DATA_BUF_LEN -1), /* Transfer size */
 	.ARBSIZE	= 0x2, /* arbitrate after 4 transfers (fifo half full for ss0) */
 	.SRCPROT0	= 0x0, /* non privilaged access */
 	/* .reserved1 */
@@ -50,18 +55,6 @@ struct DMA_control_word ADC_channel_control_word = {
 	.DESTSIZE	= 0x1, /* 16 bit data size */
 	.DESTINC	= 0x1, /* 16 bit increment */
 };
-
-
-void ADC_udma_channel_config(void)
-{
-	DMA_configure_channel( ADC_DMA_CHANNEL_NO, /* channel no 14 for adc0 ss0 */
-		       	ADC_DMA_CHANNEL_ENCODE, /* channel coding 0 for adc0 ss0 */
-			(uint32_t *)&ADC0_SSFIFO0_R, /* source end pointer */
-			(uint32_t *)&ADC_udma_buffer_A[ADC_DMA_BUF_LEN -1], /* destination end pointer */
-			&ADC_channel_control_word /* channel control word */
-			);
-	return;
-}
 
 
 extern SemaphoreHandle_t ADC_data_ready;
@@ -79,23 +72,48 @@ void ADC0_sequencer0_handler(void)
 		ADC_buf_var = 1;
 		DMA_reconfigure_channel( ADC_DMA_CHANNEL_NO, /* channel no 14 for adc0 ss0 */
 				(uint32_t *) &ADC0_SSFIFO0_R, /* source end pointer */
-				(uint32_t *) &ADC_udma_buffer_A[ADC_DMA_BUF_LEN -1], /* desetination end pointer */
+				(uint32_t *) &INPUT_BUFFER_B[DATA_BUF_LEN -1], /* desetination end pointer */
 				&ADC_channel_control_word /* channel control_word */
-				);
+		);
+
+		/* check if all the buffer data has been transmitted to pwm output */
+		while (!(TIMER0_RIS_R & TIMER_RIS_DMAARIS));
+		TIMER0_RIS_R |= (TIMER_RIS_DMAARIS);
+
+		DMA_configure_channel( TIMER0_DMA_CHANNEL_NO, /* channel no 14 for adc0 ss0 */
+				TIMER0_DMA_CHANNEL_ENCODE, /* channel coding 0 for adc0 ss0 */
+				1,						/* Use burst only */
+				(uint32_t *)&OUTPUT_BUFFER_B[DATA_BUF_LEN -1], /* source end pointer */
+				(uint32_t *)&PWM0_0_CMPA_R, /* destination end pointer */
+				&TIMER0_channel_control_word /* channel control word */
+			);
 	}
 	else{
 		ADC_buf_var = 0;
 		DMA_reconfigure_channel( ADC_DMA_CHANNEL_NO, /* channel no 14 for adc0 ss0 */
 				(uint32_t *) &ADC0_SSFIFO0_R, /* source end pointer */
-				(uint32_t *) &ADC_udma_buffer_B[ADC_DMA_BUF_LEN -1], /* desetination end pointer */
+				(uint32_t *) &INPUT_BUFFER_A[DATA_BUF_LEN -1], /* desetination end pointer */
 				&ADC_channel_control_word /* channel control_word */
-				);
+		);
+
+		/* check if all the buffer data has been transmitted to pwm output */
+		while (!(TIMER0_RIS_R & TIMER_RIS_DMAARIS));
+		TIMER0_RIS_R |= (TIMER_RIS_DMAARIS);
+
+		DMA_configure_channel( TIMER0_DMA_CHANNEL_NO, /* channel no 14 for adc0 ss0 */
+				TIMER0_DMA_CHANNEL_ENCODE, /* channel coding 0 for adc0 ss0 */
+				1,						/* Use burst only */
+				(uint32_t *)&OUTPUT_BUFFER_A[DATA_BUF_LEN -1], /* source end pointer */
+				(uint32_t *)&PWM0_0_CMPA_R, /* destination end pointer */
+				&TIMER0_channel_control_word /* channel control word */
+			);
 
 	}
 
 
 	DMA_start_transfer(ADC_DMA_CHANNEL_NO);
-
+	DMA_start_transfer(TIMER0_DMA_CHANNEL_NO);
+	
 	/* Release the ADC_data_ready semaphore to start
 	 * ADC data processing by FIR_filter_task */
 	xHigherPriorityTaskWoken = pdFALSE;
@@ -147,7 +165,7 @@ void ADC_init(void)
 	ADC0_ACTSS_R &= ~(ADC_ACTSS_ASEN0);
 	ADC0_EMUX_R |= (ADC_EMUX_EM0_M & ADC_EMUX_EM0_TIMER); /*timer trigger*/
 	ADC0_SSMUX0_R |= (0x0 << ADC_SSMUX0_MUX0_S);
-	ADC0_SSCTL0_R |= (ADC_SSCTL0_IE0 | ADC_SSCTL0_END0);
+	ADC0_SSCTL0_R |= (ADC_SSCTL0_END0);
 
 #if( ADC_USE_DMA == 1)
 	/* Enable the dma for ss0 
@@ -166,7 +184,6 @@ void ADC_init(void)
 	NVIC_EN0_R	|= (1U << ADC0_SS0_INT_NUM);
 	NVIC_PRI3_R	|= ( ( ADC0_SS0_INT_NVIC_PRIO << (8 - configPRIO_BITS) ) << 2*8);
 	
-	ADC_udma_channel_config();
 #endif
 	/* enable SS0 */
 	ADC0_ACTSS_R |= ADC_ACTSS_ASEN0;

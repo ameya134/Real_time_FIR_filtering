@@ -28,7 +28,7 @@ void DMA_init(void)
 	return;
 }
 
-void DMA_configure_channel(uint8_t channel_no,uint8_t channel_encoding,
+void DMA_configure_channel(uint8_t channel_no,uint8_t channel_encoding,uint8_t burstModeOnly,
 			uint32_t *src_end_ptr,uint32_t *dst_end_ptr, struct DMA_control_word *control_word)
 			//uint8_t data_size, uint8_t arbsize, uint16_t xfersize)
 {
@@ -39,7 +39,13 @@ void DMA_configure_channel(uint8_t channel_no,uint8_t channel_encoding,
 	/* select primary channel control structure */
 	UDMA_ALTCLR_R |= (1U << channel_no);
 	/* set dma to respond to only burst request */
-	UDMA_USEBURSTSET_R |= (1U << channel_no);
+	if(burstModeOnly){
+		UDMA_USEBURSTSET_R |= (1U << channel_no);
+	}
+	else{
+		UDMA_USEBURSTCLR_R |= (1U << channel_no);
+	}
+	
 	/* clear the mask for the channel to recognize the requests */
 	UDMA_REQMASKCLR_R |= (1U << channel_no);
 

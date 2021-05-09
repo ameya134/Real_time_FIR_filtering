@@ -20,7 +20,7 @@
 /* ********************************************************************
  * This function initializes the pwm unit and led
  *
- * param: period	time period in ms of the pwm cycle.
+ * param: period	time period of the pwm in clock cycle.
  *
  * param: duty		duty cycle in percentage for the pwm.
  *
@@ -55,7 +55,7 @@ void PWMLedInit(uint32_t period, uint8_t duty){
 	PWM0_0_CTL_R |= (0x0<<0);
 	PWM0_0_GENA_R |= ((0x3<<6) | (0x2<<2));
 
-	uint32_t loadVal = (SYSCLOCK_FREQ_Hz / 1000000) * period;
+	uint32_t loadVal = period;
 	uint32_t dutyVal = (duty * loadVal)/100;
 
 	PWM0_0_LOAD_R = loadVal;

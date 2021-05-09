@@ -18,7 +18,7 @@
 /* system tick period in miliseconds */
 #define SYSTICK_PERIOD_ms 10
 
-#define PERFORM_TEST 1
+#define PERFORM_TEST 0
 
 
 #endif

@@ -12,10 +12,31 @@
 #include "main.h"
 #include "timer0.h"
 #include "bsp.h"
+#include "dma.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
 #include "semphr.h"
+#include "app.h"
+
+#if( TIMER0A_GENERATE_DMA_TRIG == 1)
+struct DMA_control_word TIMER0_channel_control_word = {
+
+	.XFERMODE	= 0x1, /* Basic mode */
+	.NXTUSEBURST	= 0x0, /* no next use burst for last transfers */
+	.XFERSIZE	= (DATA_BUF_LEN -1), /* Transfer size */
+	.ARBSIZE	= 0x0, /* arbitrate after 1 transfer */
+	.SRCPROT0	= 0x0, /* non privilaged access */
+	/* .reserved1 */
+	.DESTPROT0	= 0x0, /* non privilaged access */
+	/* .reserved0 */
+	.SRCSIZE	= 0x1, /* 16 bit data size */
+	.SRCINC		= 0x1, /* 16 bit increment */
+	.DESTSIZE	= 0x1, /* 16 bit data size */
+	.DESTINC	= 0x3, /* No increment */
+};
+#endif
+
 
 void init_timer0(uint32_t loadVal)
 {
@@ -36,6 +57,10 @@ void init_timer0(uint32_t loadVal)
 #if( TIMER0A_GENERATE_ADC_TRIG == 1)
 	TIMER0_CTL_R	|= TIMER_CTL_TAOTE;
 	TIMER0_ADCEV_R	|= TIMER_ADCEV_TATOADCEN;
+#endif
+
+#if( TIMER0A_GENERATE_DMA_TRIG == 1)
+	TIMER0_DMAEV_R |= (TIMER_DMAEV_TATODMAEN);
 #endif
 
 

@@ -17,7 +17,7 @@
 /* ********************************************************************
  * This function initializes the pwm unit and led
  *
- * param: period	time period in ms of the pwm cycle.
+ * param: period	time period of the pwm in clock cycle.
  *
  * param: duty		duty cycle in percentage for the pwm.
  *
