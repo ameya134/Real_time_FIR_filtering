@@ -12,7 +12,7 @@
 
 #include "main.h"
 #include "dma.h"
-
+#include "hw_types.h"
 
 void DMA_init(void)
 {
@@ -50,11 +50,9 @@ void DMA_configure_channel(uint8_t channel_no,uint8_t channel_encoding,uint8_t b
 	UDMA_REQMASKCLR_R |= (1U << channel_no);
 
 	/* configure channel assignments */
-	//(*( (uint32_t*) (((uint32_t)&UDMA_CHMAP0_R) + ((channel_no >> 3)*4)) )) 
-	//	|= ( (0xF << (4*(0x07 & channel_no)) ) & channel_encoding );
-
-	(*( (uint32_t*) (((uint32_t)&UDMA_CHMAP0_R) + ((channel_no >> 3)*4)) )) 
+	HWREG(((uint32_t)&UDMA_CHMAP0_R) + ((channel_no >> 3)*4))
 		|= ( (0xF & channel_encoding) << (4*(0x07 & channel_no)));
+
 	/* configure the channel control structure */
 	DMA_control_table.channel_ctl_struct[channel_no].src_end_ptr = src_end_ptr;
 	DMA_control_table.channel_ctl_struct[channel_no].dst_end_ptr = dst_end_ptr;

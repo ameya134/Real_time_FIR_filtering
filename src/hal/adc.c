@@ -33,10 +33,10 @@
 
 
 extern volatile int ADC_buf_var;
-extern uint16_t INPUT_BUFFER_A[DATA_BUF_LEN];
-extern uint16_t INPUT_BUFFER_B[DATA_BUF_LEN];
-extern uint16_t OUTPUT_BUFFER_A[DATA_BUF_LEN];
-extern uint16_t OUTPUT_BUFFER_B[DATA_BUF_LEN];
+extern int32_t INPUT_BUFFER_A[DATA_BUF_LEN];
+extern int32_t INPUT_BUFFER_B[DATA_BUF_LEN];
+extern int32_t OUTPUT_BUFFER_A[DATA_BUF_LEN];
+extern int32_t OUTPUT_BUFFER_B[DATA_BUF_LEN];
 
 extern struct DMA_control_word TIMER0_channel_control_word;
 
@@ -53,7 +53,7 @@ struct DMA_control_word ADC_channel_control_word = {
 	.SRCSIZE	= 0x1, /* 16 bit data size */
 	.SRCINC		= 0x3, /* No increment */
 	.DESTSIZE	= 0x1, /* 16 bit data size */
-	.DESTINC	= 0x1, /* 16 bit increment */
+	.DESTINC	= 0x2, /* 32 bit increment */
 };
 
 

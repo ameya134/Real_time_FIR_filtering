@@ -30,39 +30,25 @@
 
 
 
-#if( LED_BLINK_ENABLE == 1)
-void LED_blink_task(void *param)
-{
-
-	const TickType_t xDelay = LED_BLINK_DELAY_MS/portTICK_PERIOD_MS;
-
-	for(;;){
-		LED_TOGGLE_STATE(LED1_PORT,LED1_PIN);
-		vTaskDelay(xDelay);
-	}
-
-	return;
-}
-#endif
-
-
-int count=0;
 volatile int ADC_buf_var = 0;
 
-uint16_t INPUT_BUFFER_A[DATA_BUF_LEN];
-uint16_t INPUT_BUFFER_B[DATA_BUF_LEN];
+int32_t INPUT_BUFFER_A[DATA_BUF_LEN];
+int32_t INPUT_BUFFER_B[DATA_BUF_LEN];
 
-uint16_t FIR_h_n[FILTER_LEN] = {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
+int32_t FIR_h_n[FILTER_LEN] = {-219,324,-24,1165,3469,6579,9625,11522,11522,9625,6579,3469,1165,-24,-324,-219};
 
-uint16_t OUTPUT_BUFFER_A[CONVOLUTION_LEN];
-uint16_t OUTPUT_BUFFER_B[CONVOLUTION_LEN];
+int32_t OUTPUT_BUFFER_A[CONVOLUTION_LEN];
+int32_t OUTPUT_BUFFER_B[CONVOLUTION_LEN];
+
+int32_t *INPUT_BUFFER_ptr;
+int32_t *OUTPUT_BUFFER_ptr;
 
 SemaphoreHandle_t ADC_data_ready;
 
 extern struct DMA_control_word ADC_channel_control_word;
 extern struct DMA_control_word TIMER0_channel_control_word;
 
-void FIR_filter_task(void *param)
+static void FIR_task_setup(void)
 {
 	UARTSendString("FIR filtering started...\n\r");
 
@@ -84,12 +70,44 @@ void FIR_filter_task(void *param)
 				&TIMER0_channel_control_word /* channel control word */
 			);
 
-	init_timer0((uint32_t) SystemCoreClock/TIMER0_FREQUENCY_HZ);
 	/* start the dma transfer */
 	DMA_start_transfer(ADC_DMA_CHANNEL_NO);
 	DMA_start_transfer(TIMER0_DMA_CHANNEL_NO);
 
 	init_timer0((uint32_t) SystemCoreClock/TIMER0_FREQUENCY_HZ);
+
+	return;
+}
+
+static void FIR_buffer_prepare(void)
+{
+	if(ADC_buf_var == 1){
+		memcpy(OUTPUT_BUFFER_A,
+		(&OUTPUT_BUFFER_B[DATA_BUF_LEN]),
+		(FILTER_LEN-1)*sizeof(*OUTPUT_BUFFER_A));
+		
+		INPUT_BUFFER_ptr = INPUT_BUFFER_A;
+		OUTPUT_BUFFER_ptr = OUTPUT_BUFFER_A;
+	}
+	else{
+		memcpy(OUTPUT_BUFFER_B,
+		(&OUTPUT_BUFFER_A[DATA_BUF_LEN]),
+		(FILTER_LEN-1)*sizeof(*OUTPUT_BUFFER_B));
+		
+		INPUT_BUFFER_ptr = INPUT_BUFFER_B;
+		OUTPUT_BUFFER_ptr = OUTPUT_BUFFER_B;
+	}
+	memset(&OUTPUT_BUFFER_ptr[FILTER_LEN - 1],
+		0,
+		(CONVOLUTION_LEN - (FILTER_LEN -1))*sizeof(*OUTPUT_BUFFER_ptr));
+	
+	return;
+}
+
+void FIR_filter_task(void *param)
+{
+
+	FIR_task_setup();
 
 	for(;;){
 		
@@ -99,40 +117,14 @@ void FIR_filter_task(void *param)
 			/* process the data from ADC */
 
 			/* use buffer that has been updated by uDMA */
-			if(ADC_buf_var == 1){
-				memset(OUTPUT_BUFFER_A,0,(CONVOLUTION_LEN)*sizeof(*OUTPUT_BUFFER_A));
-				memcpy(OUTPUT_BUFFER_A,
-				(OUTPUT_BUFFER_B+DATA_BUF_LEN),
-				(FILTER_LEN-1)*sizeof(*OUTPUT_BUFFER_A));
+			FIR_buffer_prepare();
 
-				convolve_16x16(INPUT_BUFFER_A,FIR_h_n,OUTPUT_BUFFER_A);
-				int i;
-				for(i=0;i<31;i++){
-					OUTPUT_BUFFER_A[i] = OUTPUT_BUFFER_A[i]>>8;
-				}
-			}
-			else{
-				memset(OUTPUT_BUFFER_B,0,(CONVOLUTION_LEN)*sizeof(*OUTPUT_BUFFER_A));
-				memcpy(OUTPUT_BUFFER_B,
-				(OUTPUT_BUFFER_A+DATA_BUF_LEN),
-				(FILTER_LEN-1)*sizeof(*OUTPUT_BUFFER_B));
+			convolve_16x16(INPUT_BUFFER_ptr,FIR_h_n,OUTPUT_BUFFER_ptr);
 
-				convolve_16x16(INPUT_BUFFER_B,FIR_h_n,OUTPUT_BUFFER_B);
-				int i;
-				for(i=0;i<31;i++){
-					OUTPUT_BUFFER_B[i] = OUTPUT_BUFFER_B[i]>>8;
-				}
+			int i;
+			for(i=0;i<16;i++){
+				OUTPUT_BUFFER_ptr[i] >>= 8;
 			}
-
-			count++;
-			if(count == TIMER0_FREQUENCY_HZ/DATA_BUF_LEN){
-				count = 0;
-				LED_TOGGLE_STATE(LED3_PORT,LED3_PIN);
-				//UARTSendString("\n\rFIR_TASK");
-			}
-			/* Test input
-			convolve_16x16(test_filter_ip,FIR_h_n,filter_output);*/
-			
 		}else{
 			UARTSendString("ERROR: Unable to aquire ADC data semaphore\n\r");
 			while(1);
@@ -144,6 +136,21 @@ void FIR_filter_task(void *param)
 	return;
 }
 
+
+#if( LED_BLINK_ENABLE == 1)
+void LED_blink_task(void *param)
+{
+
+	const TickType_t xDelay = LED_BLINK_DELAY_MS/portTICK_PERIOD_MS;
+
+	for(;;){
+		LED_TOGGLE_STATE(LED1_PORT,LED1_PIN);
+		vTaskDelay(xDelay);
+	}
+
+	return;
+}
+#endif
 
 
 void app_tasks_setup(void)

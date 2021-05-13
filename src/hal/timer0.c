@@ -31,7 +31,7 @@ struct DMA_control_word TIMER0_channel_control_word = {
 	.DESTPROT0	= 0x0, /* non privilaged access */
 	/* .reserved0 */
 	.SRCSIZE	= 0x1, /* 16 bit data size */
-	.SRCINC		= 0x1, /* 16 bit increment */
+	.SRCINC		= 0x2, /* 32 bit increment */
 	.DESTSIZE	= 0x1, /* 16 bit data size */
 	.DESTINC	= 0x3, /* No increment */
 };

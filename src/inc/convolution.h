@@ -13,7 +13,7 @@
 
 #include "main.h"
 
-void convolve_16x16(uint16_t *x,uint16_t *h, uint16_t *y);
+void convolve_16x16(int32_t *x,int32_t *h, int32_t *y);
 
 
 #endif

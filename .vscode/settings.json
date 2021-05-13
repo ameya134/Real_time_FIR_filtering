@@ -7,7 +7,8 @@
         "convolution.h": "c",
         "stdint.h": "c",
         "timer0.h": "c",
-        "pwm.h": "c"
+        "pwm.h": "c",
+        "app.h": "c"
     },
     "cortex-debug.gdbPath": "/usr/bin/gdb-multiarch"
 }
