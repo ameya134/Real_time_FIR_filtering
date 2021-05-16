@@ -1,6 +1,6 @@
 /* *****************************************************************
  *
- * API for timestamp usng timer7
+ * This file implements the timestamp functions using timer7
  * 
  * Author: 		Ameya Phadke
  * Date Created:	6th May 2021
@@ -11,6 +11,20 @@
 #include "timestamp.h"
 
 
+
+/* ***************************************************************************
+ *
+ * This function initializes the timer7 in 32-bit, one shot, count up mode.
+ *
+ * param: void
+ *
+ * return: void 
+ * 
+ * brief: This function starts the timer7 in 32-bit, one shot, count up mode
+ * to be used for timekeeping. This function needs to be called initially 
+ * before calling other timestamp functions.
+ * 
+ * **************************************************************************/
 void init_timestamp_timer(void)
 {
     /* enable clocking to timer module */
@@ -35,23 +49,79 @@ void init_timestamp_timer(void)
 	return;
 }
 
+
+
+/* ***************************************************************************
+ *
+ * This function returns the count value of the timer7
+ *
+ * param: void
+ *
+ * return: uint32_t		timer7 count value
+ * 
+ * brief: This function returns count value of timer7 which can be used to 
+ * calculate time period between 2 calls to this function.
+ * 
+ * **************************************************************************/
 uint32_t getTimeStampVal(void)
 {
     return TIMER7_TAV_R;
 }
 
+
+
+/* ***************************************************************************
+ *
+ * This function starts the timer7 to count up.
+ *
+ * param: void
+ *
+ * return: void 
+ * 
+ * brief: This function starts the timer7. Timer7 starts counting up in
+ * one shot mode.
+ * 
+ * **************************************************************************/
 void TimeStampStart(void)
 {
     /* enable timer 0 */
 	TIMER7_CTL_R	|= TIMER_CTL_TAEN;
 }
 
+
+
+/* ***************************************************************************
+ *
+ * This function halts the timer7.
+ *
+ * param: void
+ *
+ * return: void 
+ * 
+ * brief: This function halts the counting of timer7. timer7 retains its 
+ * current counting value in TIMER7_TAV_R register.
+ * 
+ * **************************************************************************/
 void TimeStampHalt(void)
 {
     /* disable timer 0 */
 	TIMER7_CTL_R    &= ~(TIMER_CTL_TAEN);
 }
 
+
+
+/* ***************************************************************************
+ *
+ * This function restarts the timer7 to count up.
+ *
+ * param: void
+ *
+ * return: void 
+ * 
+ * brief: This function restarts the timer7. the current value of timer7 is
+ * set to 0 and then Timer7 starts counting up in one shot mode.
+ * 
+ * **************************************************************************/
 void TimeStampRestart(void)
 {
     /* reset the timer value to 0 */

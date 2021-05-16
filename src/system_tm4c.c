@@ -1,3 +1,13 @@
+/* ********************************************************
+ *
+ * This file implements the system initilization function
+ *
+ * Author:		Ameya Phadke
+ * Date Created:	6th May 2021
+ * Date Modified:	6th May 2021
+ *
+ * *******************************************************/
+
 #include <main.h>
 #include <system_tm4c.h>
 
@@ -11,17 +21,31 @@
 #include "pwm.h"
 #include "timer0.h"
 
+
+
 /* system related functions and declarations */
 
+uint32_t SystemCoreClock = SYSCLOCK_FREQ_Hz; /* System Clock Frequency in Hz */
 
-uint32_t SystemCoreClock = SYSCLOCK_FREQ_Hz; /* System Base Clock Frequency in Hz */
 
 
+/* ***************************************************************************
+ *
+ * This function calls the initialization functions for different required
+ * peripherals.
+ *
+ * param: void
+ *
+ * return: void 
+ * 
+ * brief: This function calls the initialization functions for different
+ * peripherals. PLL is configured to change the system clock frequency.
+ * 
+ * **************************************************************************/
 void SystemInit(void){
 
-	/* Do any system initialization that is required */
+	/* Do system initializations */
 
-	/* Init required peripherals */
 
 	/* Init system clock and set the PLL */
 	configure_pll_clock(MOSC_CLOCK_SRC,0U,4U,96U,0U,(4U-1U),5);
@@ -32,7 +56,6 @@ void SystemInit(void){
 #if( LED_BLINK_ENABLE == 1)
 	/* INIT LED 1 */
 	INIT_LED_1();
-	INIT_LED_3();
 #endif
 	
 	/* Init DMA for ADC */
@@ -41,11 +64,13 @@ void SystemInit(void){
 	/* Initialize the ADC */
 	ADC_init();
 
+	/* Initialize PWM */
 	PWMLedInit(OUPUT_PWM_PERIOD_CYCLES,1);
-	/* Initialize the timer */
-	//init_timer0((uint32_t) SystemCoreClock/TIMER0_FREQUENCY_HZ);  
-	
-	UARTSendString("timer_initialized\n\r");
-		
+
+	/* Initialize timer0 */
+	init_timer0((uint32_t) SystemCoreClock/TIMER0_FREQUENCY_HZ);
+
+	UARTSendString("system initialization done...\n\r");
+
 	return;
 }

@@ -56,7 +56,7 @@ void PWMLedInit(uint32_t period, uint8_t duty){
 	PWM0_0_GENA_R |= ((0x3<<6) | (0x2<<2));
 
 	uint32_t loadVal = period;
-	uint32_t dutyVal = (duty * loadVal)/100;
+	uint32_t dutyVal = (duty * period)/100;
 
 	PWM0_0_LOAD_R = loadVal;
 	PWM0_0_CMPA_R = dutyVal;

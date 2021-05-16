@@ -40,7 +40,7 @@ $(TARGET).elf: $(OBJS)
 
 .PHONY: clean
 clean:
-	rm -f src/*.o src/hal/*.o src/FreeRTOS/*.o $(TARGET).elf $(TARGET).map $(TARGET).s
+	rm -f src/*.o src/hal/*.o src/FreeRTOS/*.o test/*.o $(TARGET).elf $(TARGET).map $(TARGET).s
 
 .PHONY: load
 load:
