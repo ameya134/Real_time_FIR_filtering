@@ -3,7 +3,7 @@
  * configuration and use of various clock sources which are 
  * present on tm4c129encpdt 
  *
- * Author:          Ameya Phadke
+ * Author:		Ameya Phadke
  * Date created:	28th April 2021
  * Last modified:	13th May 2021
  *

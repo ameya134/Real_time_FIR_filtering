@@ -27,18 +27,18 @@
 #if( TIMER0A_GENERATE_DMA_TRIG == 1)
 struct DMA_control_word TIMER0_channel_control_word = {
 
-	.XFERMODE			= 0x1,					/* Basic mode */
-	.NXTUSEBURST		= 0x0,					/* no next use burst for last transfers */
-	.XFERSIZE			= (DATA_BUF_LEN -1),	/* Transfer size */
-	.ARBSIZE			= 0x0,					/* arbitrate after 1 transfer */
-	.SRCPROT0			= 0x0,					/* non privilaged access */
+	.XFERMODE		= 0x1,			/* Basic mode */
+	.NXTUSEBURST		= 0x0,			/* no next use burst for last transfers */
+	.XFERSIZE		= (DATA_BUF_LEN -1),	/* Transfer size */
+	.ARBSIZE		= 0x0,			/* arbitrate after 1 transfer */
+	.SRCPROT0		= 0x0,			/* non privilaged access */
 	/* .reserved1 */
-	.DESTPROT0			= 0x0,					/* non privilaged access */
+	.DESTPROT0		= 0x0,			/* non privilaged access */
 	/* .reserved0 */
-	.SRCSIZE			= 0x1,					/* 16 bit data size */
-	.SRCINC				= 0x2,					/* 32 bit increment */
-	.DESTSIZE			= 0x1,					/* 16 bit data size */
-	.DESTINC			= 0x3,					/* No increment */
+	.SRCSIZE		= 0x1,			/* 16 bit data size */
+	.SRCINC			= 0x2,			/* 32 bit increment */
+	.DESTSIZE		= 0x1,			/* 16 bit data size */
+	.DESTINC		= 0x3,			/* No increment */
 };
 #endif
 

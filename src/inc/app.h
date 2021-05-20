@@ -18,7 +18,7 @@
 /* Macros needed by the application */
 
 /* macros related to led blink task */
-#define LED_BLINK_ENABLE 1
+#define LED_BLINK_ENABLE        1
 #define LED_BLINK_DELAY_MS	1000
 #define LED_BLINK_PRIO		tskIDLE_PRIORITY+1
 

@@ -3,7 +3,7 @@
  *
  * main calls the initialization functions and then starts the scheduler
  *
- * Author:			Ameya Phadke
+ * Author:		Ameya Phadke
  * Date Created:	3rd April 2021
  * Last modified:	15th May 2021
  * 

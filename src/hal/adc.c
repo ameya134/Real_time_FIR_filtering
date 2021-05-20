@@ -3,7 +3,7 @@
  * This file implements the functions for configuration and use of ADC module
  * on tm4c129encpdt
  * 
- * Author:			Ameya Phadke
+ * Author:		Ameya Phadke
  * Date Created:	22nd March 2021
  * Date Modified:	14th May 2021
  *
@@ -42,18 +42,18 @@ extern struct DMA_control_word TIMER0_channel_control_word;
  * configured according to the needs of the application. */
 struct DMA_control_word ADC_channel_control_word = {
 
-	.XFERMODE			= 0x1,					/* Basic mode */
-	.NXTUSEBURST		= 0x0,					/* no next use burst for last transfers */
-	.XFERSIZE			= (DATA_BUF_LEN -1),	/* Transfer size */
-	.ARBSIZE			= 0x2,					/* arbitrate after 4 transfers (fifo half full for ss0) */
-	.SRCPROT0			= 0x0,					/* non privilaged access */
+	.XFERMODE		= 0x1,			/* Basic mode */
+	.NXTUSEBURST		= 0x0,			/* no next use burst for last transfers */
+	.XFERSIZE		= (DATA_BUF_LEN -1),	/* Transfer size */
+	.ARBSIZE		= 0x2,			/* arbitrate after 4 transfers (fifo half full for ss0) */
+	.SRCPROT0		= 0x0,			/* non privilaged access */
 	/* .reserved1 */
-	.DESTPROT0			= 0x0,					/* non privilaged access */
+	.DESTPROT0		= 0x0,			/* non privilaged access */
 	/* .reserved0 */
-	.SRCSIZE			= 0x1,					/* 16 bit data size */
-	.SRCINC				= 0x3,					/* No increment */
-	.DESTSIZE			= 0x1,					/* 16 bit data size */
-	.DESTINC			= 0x2,					/* 32 bit increment */
+	.SRCSIZE		= 0x1,			/* 16 bit data size */
+	.SRCINC			= 0x3,			/* No increment */
+	.DESTSIZE		= 0x1,			/* 16 bit data size */
+	.DESTINC		= 0x2,			/* 32 bit increment */
 };
 
 
@@ -90,9 +90,9 @@ void ADC0_sequencer0_handler(void)
 	if(ADC_buf_var == 0){
 		ADC_buf_var = 1;
 		DMA_reconfigure_channel( ADC_DMA_CHANNEL_NO,			/* channel no 14 for adc0 ss0 */
-				(uint32_t *) &ADC0_SSFIFO0_R,					/* source end pointer */
+				(uint32_t *) &ADC0_SSFIFO0_R,			/* source end pointer */
 				(uint32_t *) &INPUT_BUFFER_B[DATA_BUF_LEN -1],	/* desetination end pointer */
-				&ADC_channel_control_word						/* channel control_word */
+				&ADC_channel_control_word			/* channel control_word */
 		);
 
 		/* check if all the buffer data has been transmitted to pwm output */
@@ -101,16 +101,16 @@ void ADC0_sequencer0_handler(void)
 
 		DMA_reconfigure_channel( TIMER0_DMA_CHANNEL_NO,			/* channel no 14 for adc0 ss0 */
 				(uint32_t *)&OUTPUT_BUFFER_B[DATA_BUF_LEN -1],	/* source end pointer */
-				(uint32_t *)&PWM0_0_CMPA_R,						/* destination end pointer */
-				&TIMER0_channel_control_word					/* channel control word */
+				(uint32_t *)&PWM0_0_CMPA_R,			/* destination end pointer */
+				&TIMER0_channel_control_word			/* channel control word */
 			);
 	}
 	else{
 		ADC_buf_var = 0;
 		DMA_reconfigure_channel( ADC_DMA_CHANNEL_NO,			/* channel no 14 for adc0 ss0 */
-				(uint32_t *) &ADC0_SSFIFO0_R,					/* source end pointer */
+				(uint32_t *) &ADC0_SSFIFO0_R,			/* source end pointer */
 				(uint32_t *) &INPUT_BUFFER_A[DATA_BUF_LEN -1],	/* desetination end pointer */
-				&ADC_channel_control_word						/* channel control_word */
+				&ADC_channel_control_word			/* channel control_word */
 		);
 
 		/* check if all the buffer data has been transmitted to pwm output */
@@ -119,8 +119,8 @@ void ADC0_sequencer0_handler(void)
 
 		DMA_reconfigure_channel( TIMER0_DMA_CHANNEL_NO,			/* channel no 14 for adc0 ss0 */
 				(uint32_t *)&OUTPUT_BUFFER_A[DATA_BUF_LEN -1],	/* source end pointer */
-				(uint32_t *)&PWM0_0_CMPA_R,						/* destination end pointer */
-				&TIMER0_channel_control_word					/* channel control word */
+				(uint32_t *)&PWM0_0_CMPA_R,			/* destination end pointer */
+				&TIMER0_channel_control_word			/* channel control word */
 			);
 
 	}
@@ -250,10 +250,5 @@ void ADC_init(void)
  * *******************************************************************************/
 uint16_t ADC_get_val(void)
 {
-
-	/* TRIGGERT SS0 USING SOFTWARE */
-	//ADC0_PSSI_R = ADC_PSSI_SS0;
-
-	return (ADC_SSFIFO0_DATA_M & ADC0_SSFIFO0_R);
-	
+	return (ADC_SSFIFO0_DATA_M & ADC0_SSFIFO0_R);	
 }

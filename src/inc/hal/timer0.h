@@ -18,14 +18,14 @@
 
 
 /* macros to configure the interrupt, adc and dma triggers */
-#define TIMER0A_GENERATE_INTERRUPT	0
-#define TIMER0A_GENERATE_ADC_TRIG	1
-#define TIMER0A_GENERATE_DMA_TRIG   1
+#define TIMER0A_GENERATE_INTERRUPT      0
+#define TIMER0A_GENERATE_ADC_TRIG       1
+#define TIMER0A_GENERATE_DMA_TRIG       1
 
 
 /* channel no and encoding no for timer0 dma transfer request */
-#define TIMER0_DMA_CHANNEL_NO	18
-#define TIMER0_DMA_CHANNEL_ENCODE	0
+#define TIMER0_DMA_CHANNEL_NO           18
+#define TIMER0_DMA_CHANNEL_ENCODE       0
 
 
 /* macros for interrupt no and priority of the interrupt */

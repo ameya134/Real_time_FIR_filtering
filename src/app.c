@@ -79,20 +79,20 @@ static void FIR_task_setup(void)
 
 	ADC_data_ready = xSemaphoreCreateBinary();
 
-	DMA_configure_channel( ADC_DMA_CHANNEL_NO, /* channel no 14 for adc0 ss0 */
-				ADC_DMA_CHANNEL_ENCODE, /* channel coding 0 for adc0 ss0 */
+	DMA_configure_channel( ADC_DMA_CHANNEL_NO,				/* channel no 14 for adc0 ss0 */
+				ADC_DMA_CHANNEL_ENCODE,				/* channel coding 0 for adc0 ss0 */
 				1,						/* Use burst only */
-				(uint32_t *)&ADC0_SSFIFO0_R, /* source end pointer */
-				(uint32_t *)&INPUT_BUFFER_A[DATA_BUF_LEN -1], /* destination end pointer */
-				&ADC_channel_control_word /* channel control word */
+				(uint32_t *)&ADC0_SSFIFO0_R,			/* source end pointer */
+				(uint32_t *)&INPUT_BUFFER_A[DATA_BUF_LEN -1],	/* destination end pointer */
+				&ADC_channel_control_word			/* channel control word */
 			);
 
-	DMA_configure_channel( TIMER0_DMA_CHANNEL_NO, /* channel no 14 for adc0 ss0 */
-				TIMER0_DMA_CHANNEL_ENCODE, /* channel coding 0 for adc0 ss0 */
+	DMA_configure_channel( TIMER0_DMA_CHANNEL_NO,				/* channel no 14 for adc0 ss0 */
+				TIMER0_DMA_CHANNEL_ENCODE,			/* channel coding 0 for adc0 ss0 */
 				1,						/* Use burst only */
-				(uint32_t *)&OUTPUT_BUFFER_A[DATA_BUF_LEN -1], /* source end pointer */
-				(uint32_t *)&PWM0_0_CMPA_R, /* destination end pointer */
-				&TIMER0_channel_control_word /* channel control word */
+				(uint32_t *)&OUTPUT_BUFFER_A[DATA_BUF_LEN -1],	/* source end pointer */
+				(uint32_t *)&PWM0_0_CMPA_R,			/* destination end pointer */
+				&TIMER0_channel_control_word			/* channel control word */
 			);
 
 	/* start the dma transfer */
@@ -258,7 +258,7 @@ void app_tasks_setup(void)
 	static TaskHandle_t xHandleLedTask = NULL;
 
 	xRetVal = xTaskCreate(
-			&LED_blink_task, 	/* task handler pointer */
+			&LED_blink_task,	/* task handler pointer */
 			"LED_BLINK",		/* task name */
 			256,			/* stack size in words */
 			(void *)0,		/* param for task */
@@ -274,7 +274,7 @@ void app_tasks_setup(void)
 	static TaskHandle_t xHandleFIRFilterTask = NULL;
 
 	xRetVal = xTaskCreate(
-			&FIR_filter_task, 	/* task handler pointer */
+			&FIR_filter_task,	/* task handler pointer */
 			"LED_BLINK",		/* task name */
 			256,			/* stack size in words */
 			(void *)0,		/* param for task */
@@ -287,6 +287,8 @@ void app_tasks_setup(void)
 	}
 
 
-	UARTSendString("Tasks Initialized. Starting Scheduler...\n\r");
+	UARTSendString("Tasks Initialized...\n\r");
+	UARTSendString("Starting Scheduler...\n\r");
+	
 	return;
 }
