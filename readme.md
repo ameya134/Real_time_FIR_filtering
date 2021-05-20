@@ -136,7 +136,7 @@ for processing.
 
 ## Directory Structure
 The application has following directory structure
-
+```
 /-
   |
   |
@@ -170,6 +170,7 @@ The application has following directory structure
 					-------core/----microcontroller
 							specific headers
 
+```
 
 ## Future scope and modifications
 
